@@ -9,6 +9,9 @@ jobs:
   deploy-staging:
     runs-on: ubuntu-latest
     steps:
+      - name: Set outputs
+        id: vars
+        run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
       - uses: actions/checkout@v3
       - id: 'auth'
         name: 'Authenticate to Google Cloud'
@@ -17,11 +20,14 @@ jobs:
           credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
       - id: 'deploy'
         uses: 'google-github-actions/deploy-appengine@v0'
+        with:
+          version: ${{ steps.vars.outputs.sha_short }}
+          promote: false
       - id: 'test'
         run: 'curl "${{ steps.deploy.outputs.url }}"'
-      - name: Run a one-line script
-        run: echo Hello, world!
-      - name: Run a multi-line script
-        run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
+      - name: Promote
+        uses: 'google-github-actions/deploy-appengine@v0'
+        with:
+          version: ${{ steps.vars.outputs.sha_short }}
+          promote: true
+
