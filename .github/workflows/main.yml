@@ -24,7 +24,8 @@ jobs:
           version: ${{ steps.vars.outputs.sha_short }}
           promote: false
       - id: 'test'
-        run: 'curl "${{ steps.deploy.outputs.url }}" | grep \'"mins": 6\''
+        run: |
+          curl "${{ steps.deploy.outputs.url }}" | grep '"mins": 6'
       - name: Promote
         uses: 'google-github-actions/deploy-appengine@v0'
         with:
