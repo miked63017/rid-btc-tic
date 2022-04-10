@@ -9,10 +9,10 @@ jobs:
   deploy-staging:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
       - name: Set outputs
         id: vars
         run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
-      - uses: actions/checkout@v3
       - id: 'auth'
         name: 'Authenticate to Google Cloud'
         uses: 'google-github-actions/auth@v0'
